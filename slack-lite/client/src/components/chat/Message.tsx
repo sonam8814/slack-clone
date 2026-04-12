@@ -1,16 +1,21 @@
-import React from "react";
+interface Reaction {
+  emoji: string;
+  count: number;
+}
 
-interface MessageProps {
+interface MessageUser {
+  name: string;
+  avatar?: string;
+}
+
+export interface MessageProps {
   message: {
     id: string;
-    user: {
-      name: string;
-      avatar?: string;
-    };
+    user: MessageUser;
     content: string;
     createdAt: Date | string;
     isEdited?: boolean;
-    reactions?: { emoji: string; count: number }[];
+    reactions?: Reaction[];
   };
   onReply?: (messageId: string) => void;
   onReact?: (messageId: string, emoji: string) => void;
@@ -45,11 +50,11 @@ const isRecent = (date: Date | string) => {
   return diffMs < 5 * 60 * 1000;
 };
 
-export const Message: React.FC<MessageProps> = ({
+export const Message = ({
   message,
   onReply,
   onReact,
-}) => {
+}: MessageProps) => {
   const {
     id,
     user = { name: "Unknown" },
@@ -110,7 +115,7 @@ export const Message: React.FC<MessageProps> = ({
         {/* Reactions */}
         {reactions.length > 0 && (
           <div className="flex gap-1 mt-1 flex-wrap">
-            {reactions.map((reaction, idx) => (
+            {reactions.map((reaction: Reaction, idx: number) => (
               <button
                 key={`${reaction.emoji}-${idx}`}
                 onClick={() => onReact?.(id, reaction.emoji)}
